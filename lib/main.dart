@@ -16,6 +16,7 @@ class CalculatorApp extends StatefulWidget {
 }
 
 class _CalculatorAppState extends State<CalculatorApp> {
+  //
   List<String> calcListi = [];
   bool isEqualed = false;
   bool isCounted = false;
