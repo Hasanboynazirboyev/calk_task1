@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:math_expressions/math_expressions.dart';
 
@@ -16,12 +18,14 @@ class CalculatorApp extends StatefulWidget {
 }
 
 class _CalculatorAppState extends State<CalculatorApp> {
-  //
   List<String> calcListi = [];
   bool isEqualed = false;
   bool isCounted = false;
   bool isMinus = true;
   dynamic javob = 0;
+  double foiz = 0;
+  bool isPersantage = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,42 +44,29 @@ class _CalculatorAppState extends State<CalculatorApp> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              ListTile(
-                  onTap: () {
-                    if (calcListi.isNotEmpty) {
-                      calcListi.removeLast();
-                      javob = "";
-                      if (isEqualed) {
-                        calcListi.clear();
-                      }
-                    }
-                    setState(() {});
-                  },
-                  title: Container(
-                    alignment: Alignment.centerRight,
-                    child: isCounted
-                        ? Text(
-                        
-                            calcListi.join(),
-                            style: TextStyle(fontSize: 25, color: Color.fromARGB(255, 133, 130, 130)),
-                          )
-                        : Text(""
-                          //  calcListi.join(),
-                          //   style: TextStyle(fontSize: 25, color: Color.fromARGB(255, 133, 130, 130)),
-                        ),
-                  ),
-                  subtitle: Container(
-                    alignment: Alignment.centerRight,
-                    child: isEqualed
-                        ? Text(
-                            javob.toString(),
-                            style: TextStyle(fontSize: 38, color: Colors.white),
-                          )
-                        : Text(
-                            calcListi.join(),
-                            style: TextStyle(fontSize: 38, color: Colors.white),
-                          ),
-                  )),
+              Container(
+                alignment: Alignment.centerRight,
+                child: isCounted
+                    ? Text(
+                        calcListi.join(),
+                        style: TextStyle(
+                            fontSize: 25,
+                            color: Color.fromARGB(255, 133, 130, 130)),
+                      )
+                    : Text(""),
+              ),
+              Container(
+                alignment: Alignment.centerRight,
+                child: isEqualed
+                    ? Text(
+                        javob.toString(),
+                        style: TextStyle(fontSize: 38, color: Colors.white),
+                      )
+                    : Text(
+                        calcListi.join(),
+                        style: TextStyle(fontSize: 38, color: Colors.white),
+                      ),
+              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
@@ -102,19 +93,16 @@ class _CalculatorAppState extends State<CalculatorApp> {
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          if (isMinus == true) {
-                            isMinus = false;
-                            calcListi.insert(0, "-");
-                          } else if (isMinus == false &&
-                              calcListi.first == "-") {
-                            isMinus = true;
-                            calcListi.remove("-");
-                            
+                          if (calcListi.isNotEmpty) {
+                            calcListi.removeLast();
+                            javob = "";
+                            calcListi.clear();
                           }
+                          setState(() {});
                         });
                       },
                       child: Text(
-                        "+-",
+                        "<-",
                         style: TextStyle(fontSize: 27),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -126,7 +114,8 @@ class _CalculatorAppState extends State<CalculatorApp> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        belgiQoshishFunc("%");
+                        isPersantage = true;
+                        foizniKorsat(calcListi);
                       },
                       child: Text(
                         "%",
@@ -377,7 +366,7 @@ class _CalculatorAppState extends State<CalculatorApp> {
                         textAlign: TextAlign.start,
                       ),
                       style: ElevatedButton.styleFrom(
-                        fixedSize: Size(155, 70),
+                        fixedSize: Size(165, 70),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(65)),
                         backgroundColor: Color.fromARGB(255, 58, 53, 53),
@@ -400,12 +389,12 @@ class _CalculatorAppState extends State<CalculatorApp> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        isEqualed = true;
+                        isPersantage = true;
                         isCounted = true;
+                        isEqualed = true;
                         hisobla(calcListi);
-                        setState(() {
-                          
-                        });
+
+                        setState(() {});
                       },
                       child: Text(
                         "=",
@@ -444,10 +433,9 @@ class _CalculatorAppState extends State<CalculatorApp> {
     setState(() {});
   }
 
-  hisobla(List<String> sonlar) {
-    var last = sonlar.last;
-    if (last == "/" || last == "+" || last == "*") {}
-
+  hisobla(
+    List<String> sonlar,
+  ) {
     String son = sonlar.join();
 
     Parser p = Parser();
@@ -456,7 +444,17 @@ class _CalculatorAppState extends State<CalculatorApp> {
 
     javob = exp.evaluate(EvaluationType.REAL, ContextModel());
 
-    // calcListi.clear();
+    setState(() {});
+  }
+
+  foizniKorsat(List<String> list) {
+    var a = double.parse(list.join());
+    if (a > 0) {
+      foiz = a / 100;
+    }
+
+    calcListi.clear();
+    calcListi.add(foiz.toString());
     setState(() {});
   }
 }
