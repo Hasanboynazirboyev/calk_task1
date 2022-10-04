@@ -44,19 +44,20 @@ class _CalculatorAppState extends State<CalculatorApp> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              // Container(
+              //   alignment: Alignment.centerRight,
+              //   child: isCounted
+              //       ? Text(
+              //           calcListi.join(),
+              //           style: TextStyle(
+              //               fontSize: 25,
+              //               color: Color.fromARGB(255, 133, 130, 130)),
+              //         )
+              //       : Text(""),
+              // ),
               Container(
                 alignment: Alignment.centerRight,
-                child: isCounted
-                    ? Text(
-                        calcListi.join(),
-                        style: TextStyle(
-                            fontSize: 25,
-                            color: Color.fromARGB(255, 133, 130, 130)),
-                      )
-                    : Text(""),
-              ),
-              Container(
-                alignment: Alignment.centerRight,
+                margin: EdgeInsets.symmetric(horizontal: 30),
                 child: isEqualed
                     ? Text(
                         javob.toString(),
@@ -96,7 +97,6 @@ class _CalculatorAppState extends State<CalculatorApp> {
                           if (calcListi.isNotEmpty) {
                             calcListi.removeLast();
                             javob = "";
-                            calcListi.clear();
                           }
                           setState(() {});
                         });
@@ -114,18 +114,19 @@ class _CalculatorAppState extends State<CalculatorApp> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        isPersantage = true;
                         foizniKorsat(calcListi);
+                        setState(() {});
                       },
                       child: Text(
                         "%",
-                        style: TextStyle(fontSize: 30),
+                        style: TextStyle(fontSize: 27),
                       ),
                       style: ElevatedButton.styleFrom(
-                          fixedSize: Size(70, 70),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(65)),
-                          backgroundColor: Colors.amber),
+                        fixedSize: Size(70, 70),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(35)),
+                        backgroundColor: Color.fromARGB(255, 140, 134, 133),
+                      ),
                     ),
                     ElevatedButton(
                       onPressed: () {
@@ -389,9 +390,9 @@ class _CalculatorAppState extends State<CalculatorApp> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        isPersantage = true;
                         isCounted = true;
                         isEqualed = true;
+                        isMinus = false;
                         hisobla(calcListi);
 
                         setState(() {});
@@ -420,8 +421,8 @@ class _CalculatorAppState extends State<CalculatorApp> {
   belgiQoshishFunc(String belgi) {
     var last = calcListi.isNotEmpty ? calcListi.last : "";
     isEqualed ? isEqualed = false : null;
-    if (belgi == "+" || belgi == "-" || belgi == "*") {
-      if (last != "+" && last != "*" && last != "/") {
+    if (belgi == "+" || belgi == "-" || belgi == "*" || belgi == "/" || belgi == ".") {
+      if (last != "+" && last != "*" && last != "/" && last != "." && last != "-" ) {
         if (calcListi.isNotEmpty || belgi == "-") {
           calcListi.add(belgi);
         }
@@ -436,6 +437,14 @@ class _CalculatorAppState extends State<CalculatorApp> {
   hisobla(
     List<String> sonlar,
   ) {
+    var last = sonlar.last;
+    // if (last == "-" || last == "+" || last == "*") {
+    //   sonlar.removeLast();
+    // }
+     if (last == "-" || last == "+" || last == "*" || last == "/" || last == "%" || last == ".") {
+      sonlar.removeLast();
+    }
+
     String son = sonlar.join();
 
     Parser p = Parser();
@@ -447,14 +456,31 @@ class _CalculatorAppState extends State<CalculatorApp> {
     setState(() {});
   }
 
-  foizniKorsat(List<String> list) {
-    var a = double.parse(list.join());
-    if (a > 0) {
-      foiz = a / 100;
+  foizniKorsat(List<String> sonlar) {
+  
+    isEqualed = true;
+    var last =isEqualed? "":sonlar.last;
+    if (last == "-" || last == "+" || last == "*" || last == "/" || last == "%" || last == ".") {
+      sonlar.removeLast();
     }
 
+    String son = sonlar.join();
+
+    Parser p = Parser();
+
+    Expression exp = p.parse(son);
+
+    javob = exp.evaluate(EvaluationType.REAL, ContextModel())/100;
+
+    debugPrint(javob.toString());
+
     calcListi.clear();
-    calcListi.add(foiz.toString());
+    calcListi.add(javob.toString());
     setState(() {});
+
+    
   }
-}
+  }
+
+  
+
